@@ -28,7 +28,10 @@ import sys
 import json
 import requests
 import csv
+<<<<<<< HEAD
 import argparse
+=======
+>>>>>>> e6e13e4f152084ee66a2f78ba22c82e6968b5634
 
 
 # obtain number of downloads and number of downloaded records for the dataset
@@ -76,7 +79,11 @@ def gbifDownload(datasetKey, yearStats):
     return (countDwl, countRec)
 
 # obtain the list of datasets for the node
+<<<<<<< HEAD
 def gbifGetNodeDatasets(nodeKey):
+=======
+def gbifGetDatasets(nodeKey):
+>>>>>>> e6e13e4f152084ee66a2f78ba22c82e6968b5634
     endOfRecords = False
     offset = 0
     limit = 20
@@ -100,6 +107,7 @@ def gbifGetNodeDatasets(nodeKey):
                 i += 1
             offset += 20
         except ValueError:
+<<<<<<< HEAD
             print ('ValueError on gbifGetNodeDatasets')
     return listaDatasets
 
@@ -162,6 +170,23 @@ def main():
     listaDatasets_1 = gbifGetOrgDatasets(argument.organizationKey)
     listaDatasets += listaDatasets_1
     filename = "stats_count_" + argument.nodeKey + ".csv"
+=======
+            print ('ValueError on gbifGetDatasets')
+    return listaDatasets
+
+
+def main():
+    if len(sys.argv) >= 3:
+        nodeKey = sys.argv[1]
+        yearRelat = sys.argv[2]
+    else:
+        print ("Run command: python gbifStat_dataset.py [nodeKey] [year]\nExample: python gbifStat_dataset.py 673f7038-4262-4149-b753-5658a4e912f6 2019")
+        nodeKey = '673f7038-4262-4149-b753-5658a4e912f6'
+        yearRelat = 2019
+    listaDatasets = gbifGetDatasets(nodeKey)
+    print ("Existem " + str(len(listaDatasets)) + "datasets.")
+    filename = "stats_count_" + nodeKey + ".csv"
+>>>>>>> e6e13e4f152084ee66a2f78ba22c82e6968b5634
     i = 0
     with open(filename, "w") as file:
         file_writer = csv.writer(file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -175,9 +200,14 @@ def main():
                 # if datasest are of type Occurrence or Sampling Event
                 if str(lista[1]) == "OCCURRENCE" or str(lista[1]) == "SAMPLING_EVENT":
                     print (lista[1])
+<<<<<<< HEAD
                     numberRecords = gbifGetDatasetCount(lista[0])
                     counts =  gbifDownload(lista[0], yearRelat)
                     line = (i, lista[2], lista[0], lista[6], lista[3], lista[1], lista[5][0:10], numberRecords, counts[0], counts[1])
+=======
+                    counts =  gbifDownload(lista[0], yearRelat)
+                    line = (i, lista[2], lista[0], lista[6], lista[3], lista[1],lista[5][0:10],counts[0], counts[1])
+>>>>>>> e6e13e4f152084ee66a2f78ba22c82e6968b5634
                     file_writer.writerow(line)
                 else:
                     print (lista[1])
