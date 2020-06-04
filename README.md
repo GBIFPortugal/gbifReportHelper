@@ -20,4 +20,3 @@ optional arguments:
                         GUID of the organization. Example:
                         dfad10f6-d84b-4fa2-b6d0-df2a3eb38b65
   -y YEAR, --year YEAR  Year of report. Example: 2019```
-```

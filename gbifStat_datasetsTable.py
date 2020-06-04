@@ -28,10 +28,7 @@ import sys
 import json
 import requests
 import csv
-<<<<<<< HEAD
 import argparse
-=======
->>>>>>> e6e13e4f152084ee66a2f78ba22c82e6968b5634
 
 
 # obtain number of downloads and number of downloaded records for the dataset
@@ -79,11 +76,7 @@ def gbifDownload(datasetKey, yearStats):
     return (countDwl, countRec)
 
 # obtain the list of datasets for the node
-<<<<<<< HEAD
 def gbifGetNodeDatasets(nodeKey):
-=======
-def gbifGetDatasets(nodeKey):
->>>>>>> e6e13e4f152084ee66a2f78ba22c82e6968b5634
     endOfRecords = False
     offset = 0
     limit = 20
@@ -107,7 +100,6 @@ def gbifGetDatasets(nodeKey):
                 i += 1
             offset += 20
         except ValueError:
-<<<<<<< HEAD
             print ('ValueError on gbifGetNodeDatasets')
     return listaDatasets
 
@@ -151,7 +143,16 @@ def gbifGetDatasetCount(datasetKey):
     count = parsed_json['count']
     return count
 
-
+# Obtain the number of records of a dataset
+def gbifGetDatasetGeoCount(datasetKey):
+    address = 'https://api.gbif.org/v1/occurrence/search?hasCoordinate=TRUE&datasetKey=' + datasetKey
+    try:
+        txt = requests.get(address)
+    except IOError:
+        print ('problema no acesso ao API GBIF em gbifGetDatasetCount: código:', txt.raise_for_status())
+    parsed_json = json.loads(txt.text)
+    count = parsed_json['count']
+    return count
 
 def main():
 
@@ -169,50 +170,31 @@ def main():
     listaDatasets = gbifGetNodeDatasets(argument.nodeKey)
     listaDatasets_1 = gbifGetOrgDatasets(argument.organizationKey)
     listaDatasets += listaDatasets_1
-    filename = "stats_count_" + argument.nodeKey + ".csv"
-=======
-            print ('ValueError on gbifGetDatasets')
-    return listaDatasets
-
-
-def main():
-    if len(sys.argv) >= 3:
-        nodeKey = sys.argv[1]
-        yearRelat = sys.argv[2]
-    else:
-        print ("Run command: python gbifStat_dataset.py [nodeKey] [year]\nExample: python gbifStat_dataset.py 673f7038-4262-4149-b753-5658a4e912f6 2019")
-        nodeKey = '673f7038-4262-4149-b753-5658a4e912f6'
-        yearRelat = 2019
-    listaDatasets = gbifGetDatasets(nodeKey)
-    print ("Existem " + str(len(listaDatasets)) + "datasets.")
-    filename = "stats_count_" + nodeKey + ".csv"
->>>>>>> e6e13e4f152084ee66a2f78ba22c82e6968b5634
-    i = 0
+    filename = "stats_count_" + str(argument.year) + "_" + argument.nodeKey + ".csv"
+    i = 1
     with open(filename, "w") as file:
         file_writer = csv.writer(file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        file_writer.writerow(['ID','publishingOrganizationKey','datasetKey','license','title','type','modified','n_records','n_downloads','n_downloadeRecords'])
+        file_writer.writerow(['ID','publishingOrganizationKey','datasetKey','license','title','type','created','modified','n_records','n_recordsGeo','n_downloads','n_downloadeRecords'])
         for lista in listaDatasets:
-            i =+ 1
             yearCreated = int(lista[4][0:4])
             print ("yearCreated: " + lista[4][0:4])
             # skip dataset if year of creation is higher than the input year for statistcs
             if yearCreated <= yearRelat:
                 # if datasest are of type Occurrence or Sampling Event
                 if str(lista[1]) == "OCCURRENCE" or str(lista[1]) == "SAMPLING_EVENT":
-                    print (lista[1])
-<<<<<<< HEAD
                     numberRecords = gbifGetDatasetCount(lista[0])
+                    numberRecordsGeo = gbifGetDatasetGeoCount(lista[0])
                     counts =  gbifDownload(lista[0], yearRelat)
-                    line = (i, lista[2], lista[0], lista[6], lista[3], lista[1], lista[5][0:10], numberRecords, counts[0], counts[1])
-=======
-                    counts =  gbifDownload(lista[0], yearRelat)
-                    line = (i, lista[2], lista[0], lista[6], lista[3], lista[1],lista[5][0:10],counts[0], counts[1])
->>>>>>> e6e13e4f152084ee66a2f78ba22c82e6968b5634
+                    line = (i, lista[2], lista[0], lista[6], lista[3], lista[1], lista[4][0:10], lista[5][0:10], numberRecords, numberRecordsGeo, counts[0], counts[1])
                     file_writer.writerow(line)
+                    print(line)
+                    i =+ 1
                 else:
-                    print (lista[1])
-                    line = (i, lista[2], lista[0], lista[6], lista[3], lista[1],lista[5][0:10])
+                    line = (i, lista[2], lista[0], lista[6], lista[3], lista[1], lista[4][0:10], lista[5][0:10])
                     file_writer.writerow(line)
+                    print(line)
+                    i =+ 1
+
 
 
 if __name__ == '__main__':
