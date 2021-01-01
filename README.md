@@ -2,7 +2,21 @@
 This project contains helper scripts to prepare the GBIF.pt yearly report
 
 ### gbifStat_datasetsTable.py
-This script Serves to prepare a table of the datasets published by Portuguese published. Using the GBIF API Registry, it determines the number of downloads and downloaded records for a certain year. It runs with python 3.
+This script creates a table with information about the datasets published by a GBIF country's publishers. Using the GBIF API Registry, it gets the number of downloads and downloaded records for a certain year. It runs with python 3.
+
+The created table includes the following columns
+- ID
+- publishingOrganizationKey - key of the publisher organisation
+- datasetKey - key of the dataset
+- license - license of the dataset
+- title - title of the dataset
+- type - dataset type: occurrences, sample based, checklist
+- created - creation date of the dataset
+- modified - last modification date
+- n_records - number of records in the dataset
+- n_recordsGeo - number of georeferenced records
+- n_downloads - number of GBIF downloads that included records from the dataset
+- n_downloadeRecords - number of downloaded records
 
 Run command:
 
