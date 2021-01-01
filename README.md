@@ -17,6 +17,7 @@ The created table includes the following columns
 - n_recordsGeo - number of georeferenced records
 - n_downloads - number of GBIF downloads that included records from the dataset
 - n_downloadeRecords - number of downloaded records
+- n_citations - number of citations of the dataset
 
 Run command:
 

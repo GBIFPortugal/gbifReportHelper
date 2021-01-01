@@ -143,9 +143,21 @@ def gbifGetDatasetCount(datasetKey):
     count = parsed_json['count']
     return count
 
-# Obtain the number of records of a dataset
+# Obtain the number of georeferenced records of a dataset
 def gbifGetDatasetGeoCount(datasetKey):
     address = 'https://api.gbif.org/v1/occurrence/search?hasCoordinate=TRUE&datasetKey=' + datasetKey
+    try:
+        txt = requests.get(address)
+    except IOError:
+        print ('problema no acesso ao API GBIF em gbifGetDatasetCount: código:', txt.raise_for_status())
+    parsed_json = json.loads(txt.text)
+    count = parsed_json['count']
+    return count
+
+
+# Obtain the number of citations of a dataset
+def gbifGetDatasetCitationsCount(datasetKey):
+    address = 'https://www.gbif.org/api/resource/search?contentType=literature&gbifDatasetKey=' + datasetKey
     try:
         txt = requests.get(address)
     except IOError:
@@ -174,7 +186,7 @@ def main():
     i = 1
     with open(filename, "w") as file:
         file_writer = csv.writer(file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        file_writer.writerow(['ID','publishingOrganizationKey','datasetKey','license','title','type','created','modified','n_records','n_recordsGeo','n_downloads','n_downloadeRecords'])
+        file_writer.writerow(['ID','publishingOrganizationKey','datasetKey','license','title','type','created','modified','n_records','n_recordsGeo','n_downloads','n_downloadeRecords','n_citations'])
         for lista in listaDatasets:
             yearCreated = int(lista[4][0:4])
             print ("yearCreated: " + lista[4][0:4])
@@ -184,8 +196,9 @@ def main():
                 if str(lista[1]) == "OCCURRENCE" or str(lista[1]) == "SAMPLING_EVENT":
                     numberRecords = gbifGetDatasetCount(lista[0])
                     numberRecordsGeo = gbifGetDatasetGeoCount(lista[0])
+                    numberCitations = gbifGetDatasetCitationsCount(lista[0])
                     counts =  gbifDownload(lista[0], yearRelat)
-                    line = (i, lista[2], lista[0], lista[6], lista[3], lista[1], lista[4][0:10], lista[5][0:10], numberRecords, numberRecordsGeo, counts[0], counts[1])
+                    line = (i, lista[2], lista[0], lista[6], lista[3], lista[1], lista[4][0:10], lista[5][0:10], numberRecords, numberRecordsGeo, counts[0], counts[1], numberCitations)
                     file_writer.writerow(line)
                     print(line)
                     i =+ 1
